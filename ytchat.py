@@ -4,7 +4,7 @@ import openai
 import requests
 
 # Load your OpenAI API key from an environment variable or direct assignment
-openai.api_key = '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'
+openai.api_key = 'YOUR API KEY'
 api_key = openai.api_key
 
 # Define the URL variable for the YouTube video you want to download.
