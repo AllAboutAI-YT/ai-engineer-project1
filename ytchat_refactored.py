@@ -5,7 +5,7 @@ import requests
 import os
 
 # Set the API key from an environment variable for security
-api_key = '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'
+api_key = 'YOUR API KEY'
 
 
 # Function to download a YouTube video
