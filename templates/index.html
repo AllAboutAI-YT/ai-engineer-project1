@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+    :root {
+        --neon-text: #ffffff;
+        --neon-blue: #00c0ff;
+        --neon-pink: #ff00ff;
+        --dark-background: rgba(0, 0, 0, 0.7); /* For input backgrounds */
+    }
+
+    body {
+        font-family: 'Press Start 2P', cursive;
+        margin: 0;
+        padding: 20px;
+        background: url('https://nordnet.blob.core.windows.net/bilde/test4.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: var(--neon-text);
+        text-align: center;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background-attachment: fixed;
+    }
+
+    input[type="text"], textarea {
+        border: 2px solid var(--neon-text);
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        width: calc(100% - 22px);
+        background: var(--dark-background);
+        color: var(--neon-text);
+        text-shadow: 1px 1px 2px #000;
+    }
+
+    button {
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: var(--neon-text);
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #startTranscription {
+        background-color: var(--neon-blue);
+        box-shadow: 0 0 10px var(--neon-blue);
+    }
+
+    #startTranscription:hover {
+        background-color: #0099cc;
+    }
+
+    #startTranscription:active {
+        transform: translateY(2px);
+    }
+
+    #sendMessage {
+        background-color: var(--neon-pink);
+        box-shadow: 0 0 10px var(--neon-pink);
+    }
+
+    #sendMessage:hover {
+        background-color: #cc00cc;
+    }
+
+    #sendMessage:active {
+        transform: translateY(2px);
+    }
+
+    input[type="text"]:focus, textarea:focus {
+        outline: none;
+        box-shadow: 0 0 10px var(--neon-blue);
+    }
+
+    h1 {
+        text-shadow: 3px 3px 4px #000;
+    }
+
+    #statusMessage {
+        font-size: 0.8rem;
+        margin-bottom: 10px;
+        text-shadow: 1px 1px 2px #000;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        body {
+            padding: 10px;
+        }
+
+        input[type="text"], textarea, button {
+            width: calc(100% - 20px);
+        }
+    }
+    </style>
+</head>
+<body>
+    <h1>YouTube Video Chatbot</h1>
+
+    <input type="text" id="youtubeUrl" placeholder="Enter YouTube Video URL" />
+    <button id="startTranscription" onclick="startTranscription()">Transcribe Video</button>
+    <p id="statusMessage"></p>
+
+    <input type="text" id="userMessage" placeholder="Say something to the chatbot" onkeypress="handleKeyPress(event)"/>
+    <button id="sendMessage" onclick="sendMessage()">Send</button>
+
+    <textarea id="chatbotResponse" readonly placeholder="Chatbot's response will appear here..."></textarea>
+
+    <script>
+        function startTranscription() {
+            var youtubeUrl = document.getElementById('youtubeUrl').value;
+            if(youtubeUrl) {
+                document.getElementById('statusMessage').innerText = 'Transcribing, please wait...';
+                // AJAX request to the /transcribe route
+                $.post('/transcribe', { youtube_url: youtubeUrl }, function(data) {
+                    if(data.error) {
+                        document.getElementById('statusMessage').innerText = data.error;
+                    } else {
+                        document.getElementById('statusMessage').innerText = data.message; // reverted to old functionality
+                    }
+                });
+            } else {
+                alert('Please enter a YouTube URL.');
+            }
+        }
+
+        function sendMessage() {
+            var userMessage = $('#userMessage').val();
+            if(userMessage) { // Reverted to jQuery for consistency
+                $.post('/chat', { user_message: userMessage }, function(data) { // Reverted to old route '/chat'
+                    if(data.error) {
+                        console.error("Error from the bot:", data.error);
+                        $('#chatbotResponse').val("Error: " + data.error);
+                    } else {
+                        console.log("Bot response:", data.bot_response);
+                        $('#chatbotResponse').val(data.bot_response); // Reverted to old response property
+                    }
+                }, 'json');
+            } else {
+                alert('Please enter a message to send.');
+            }
+        }
+
+        function handleKeyPress(event) {
+            if(event.keyCode === 13 || event.key === 'Enter') { // Added keyCode for broader compatibility
+                sendMessage();
+            }
+        }
+    </script>
+</body>
+</html>
