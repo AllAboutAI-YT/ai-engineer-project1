@@ -3,7 +3,7 @@ import os
 from flask import Flask, request, render_template, jsonify
 from ytchat_refactored import download_youtube_video, convert_mp4_to_mp3, transcribe_audio_to_text, chat_with_bot, create_chatbot_context
 
-OPENAI_API_KEY = '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'
+OPENAI_API_KEY = 'YOUR API KEY'
 
 app = Flask(__name__)
 
